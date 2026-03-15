@@ -1,0 +1,1 @@
+{"sidecar-permissions":{"identifier":"sidecar-permissions","description":"","local":true,"windows":["main"],"permissions":["core:default","shell:default","notification:default",{"identifier":"shell:allow-execute","allow":[{"args":true,"cmd":"python3","name":"python-sidecar"},{"args":true,"cmd":"uv","name":"uv-run"}]}]}}

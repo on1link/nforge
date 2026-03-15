@@ -1,0 +1,58 @@
+[project]
+name        = "python_sidecar"
+version     = "1.0.0-beta"
+description = "Neural Forge Python sidecar — FastAPI intelligence layer"
+requires-python = ">=3.11"
+
+dependencies = [
+    # ── Web framework ─────────────────────────────────────────────────────────
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+
+    # ── Settings ──────────────────────────────────────────────────────────────
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+
+    # ── Async SQLite ──────────────────────────────────────────────────────────
+    "aiosqlite>=0.20",
+
+    # ── Logging ───────────────────────────────────────────────────────────────
+    "structlog>=24.1",
+
+    # ── Phase 2: Intelligence ─────────────────────────────────────────────────
+    "sentence-transformers>=3.0",    # FAISS embeddings
+    "httpx>=0.27",                   # Ollama HTTP client (async)
+    "pymupdf>=1.24",                 # PDF text extraction (normalizado a minúsculas)
+
+    # ── Phase 3: Ecosystem ────────────────────────────────────────────────────
+    "networkx>=3.3",                 # Knowledge graph
+    "gitpython>=3.1",                # Git auto-backup
+    "watchdog>=4.0",                 # Vault file watcher
+    "websockets>=12.0",              # Study room WebSocket
+    "bcrypt>=4.2",                   # Mobile API key hashing
+    "scipy>=1.13",                   # Analytics forecasting
+    "pandas"
+]
+
+[project.optional-dependencies]
+# Extraemos FAISS para evitar colisiones de namespace
+cpu = ["faiss-cpu>=1.8"]
+gpu = ["usearch>=2.13"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    # httpx eliminado de aquí porque ya está en las dependencias principales
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python_sidecar"] # Cambia "app" por el nombre real de la carpeta donde están tus .py
+
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
+
