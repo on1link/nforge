@@ -32,8 +32,7 @@ use tauri::{
     RunEvent, // 🐛 FIX: Importamos Emitter y RunEvent para el manejo de apagado
 };
 use tracing::info;
-use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
-
+use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter}; // Brings in the 1-argument Result // Brings in the 1-argument Result
 /// Global DB pool — set once on startup, shared via Tauri State.
 pub static DB: OnceCell<SqlitePool> = OnceCell::new();
 
@@ -144,6 +143,7 @@ fn main() {
                 // Run all migrations (001 → 003)
                 //  db::run_migrations(&pool).await.expect("migrations failed");
                 //  info!("Migrations applied");
+                handle.manage(db::DbPool(pool.clone())); // Store pool in Tauri state
 
                 // Seed skill nodes if empty
                 db::seed_skill_nodes(&pool).await.expect("seed failed");
@@ -206,6 +206,30 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // ... (Tus comandos Phase 1, 2 y 3 quedan exactamente igual)
             commands::get_user,
+            commands::update_streak,
+            commands::get_skill_levels,
+            commands::level_up_skill,
+            commands::list_tasks,
+            commands::create_task,
+            commands::complete_task,
+            commands::delete_task,
+            commands::list_goals,
+            commands::update_goal_progress,
+            commands::log_grind_session,
+            commands::list_grind_sessions,
+            commands::list_projects,
+            commands::create_project,
+            commands::move_project,
+            commands::delete_project,
+            commands::log_sleep,
+            commands::list_sleep_logs,
+            commands::list_activity,
+            commands::set_vault_path,
+            commands::list_vault_notes,
+            commands::read_vault_note,
+            commands::write_vault_note,
+            commands::get_config,
+            commands::set_config,
             commands_p2::sidecar_status,
             // (He omitido la lista larga aquí por brevedad, pero mantén todos tus comandos)
         ])

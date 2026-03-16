@@ -8,10 +8,11 @@ use chrono::Utc;
 use serde_json::{json, Value};
 use sqlx::SqlitePool;
 use tauri::State;
-use uuid::Uuid;
+use uuid::Uuid; // Brings in the 1-argument Result
 
 use crate::db::DbPool;
-use crate::error::{NfError, Result};
+use crate::error::NfError;
+use crate::error::Result; // Brings in the 1-argument Result
 
 const XP_PER_LEVEL: i64 = 1000;
 
@@ -117,31 +118,48 @@ pub async fn update_streak(db: State<'_, DbPool>) -> Result<i64> {
 // ════════════════════════════════════════════════════════════════════════════
 
 #[tauri::command]
-pub async fn get_skill_levels(db: State<'_, DbPool>) -> Result<Value> {
+pub async fn get_skill_levels(db: tauri::State<'_, DbPool>) -> Result<serde_json::Value> {
+    // 1. Fetch User Levels
     let rows = sqlx::query_as::<_, (String, String, i64, i64)>(
-        "SELECT d.id,d.path_id,COALESCE(u.level,0),COALESCE(u.xp_invested,0)
+        "SELECT d.id, d.path_id, COALESCE(u.level,0), COALESCE(u.xp_invested,0)
          FROM skill_node_defs d
-         LEFT JOIN user_skill_levels u ON u.node_id=d.id AND u.user_id='default'",
+         LEFT JOIN user_skill_levels u ON u.node_id = d.id AND u.user_id = 'default'",
     )
     .fetch_all(&db.0)
     .await?;
 
-    let defs = sqlx::query_as::<_, (String, String, String, String, String, f32, f32, String)>(
-        "SELECT id,path_id,name,icon,description,x,y,prerequisites FROM skill_node_defs",
+    // 2. Fetch Skill Definitions (FIXED COLUMNS to match 001_initial.sql)
+    let defs = sqlx::query_as::<_, (String, String, String, String, String, f32, f32, String, String)>(
+        "SELECT id, path_id, name, icon, description, canvas_x, canvas_y, prereqs, shared FROM skill_node_defs",
     )
     .fetch_all(&db.0)
     .await?;
 
-    let levels: serde_json::Map<String, Value> = rows
-        .iter()
-        .map(|(id, _, lvl, xp)| (id.clone(), json!({"level":lvl,"xp_invested":xp})))
+    // 3. Serialize Levels
+    let levels: serde_json::Map<String, serde_json::Value> = rows
+        .into_iter()
+        .map(|(id, _, lvl, xp)| (id, serde_json::json!({"level": lvl, "xp_invested": xp})))
         .collect();
 
-    let nodes: Vec<Value> = defs.iter().map(|(id,path,name,icon,desc,x,y,prereqs)|
-        json!({"id":id,"path_id":path,"name":name,"icon":icon,"description":desc,"x":x,"y":y,"prerequisites":prereqs})
-    ).collect();
+    // 4. Serialize Nodes (FIXED JSON KEYS to match React api.ts)
+    let nodes: Vec<serde_json::Value> = defs
+        .into_iter()
+        .map(|(id, path, name, icon, desc, cx, cy, prereqs, shared)| {
+            serde_json::json!({
+                "id": id,
+                "path_id": path,
+                "name": name,
+                "icon": icon,
+                "description": desc,
+                "canvas_x": cx,   // Matches TS SkillNode
+                "canvas_y": cy,   // Matches TS SkillNode
+                "prereqs": prereqs, // Matches TS SkillNode
+                "shared": shared    // Matches TS SkillNode
+            })
+        })
+        .collect();
 
-    Ok(json!({"levels":levels,"nodes":nodes}))
+    Ok(serde_json::json!({ "levels": levels, "nodes": nodes }))
 }
 
 #[tauri::command]

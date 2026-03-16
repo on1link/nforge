@@ -137,9 +137,9 @@ export const api = {
 // TYPES
 // ════════════════════════════════════════════════════════════════════════════
 
-export interface User { id: string; username: string; xp: number; level: number; sp: number; streak: number; active_paths: string; }
+export interface User { id: string; name: string; xp: number; level: number; sp: number; streak: number; active_paths: string; }
 export interface SkillData { levels: Record<string, { level: number; xp_invested: number }>; nodes: SkillNode[]; }
-export interface SkillNode { id: string; path_id: string; name: string; icon: string; description: string; canvas_x: number; canvas_y: number; prerequisites: string; }
+export interface SkillNode { id: string; path_id: string; name: string; icon: string; description: string; canvas_x: number; canvas_y: number; prereqs: string; shared: string; }
 export interface Task { id: string; title: string; description?: string; done: boolean; xp_reward: number; due_date?: string; skill_node_id?: string; }
 export interface Goal { id: string; title: string; description?: string; progress: number; total: number; target_date?: string; pct: number; }
 export interface GoalProgress { progress: number; total: number; pct: number; done: boolean; }

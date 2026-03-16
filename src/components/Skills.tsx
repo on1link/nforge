@@ -8,43 +8,6 @@ import type { SkillData, SkillNode } from "../api";
 import type { UseGameState } from "../hooks/useGameState";
 import { C, F, bar, bezier, btn, card, col_, fill, glassCard, h1, h3, levelArc, mono, row, tag } from "../tokens";
 
-const R = 28; // node radius
-const CW = 720;
-const CH = 590;
-
-const TREE_META: Record<string, { col: string; icon: string; label: string }> = {
-  mle: { col: C.mle, icon: "⚡", label: "Machine Learning Engineer" },
-  ds: { col: C.ds, icon: "📊", label: "Data Scientist" },
-  de: { col: C.de, icon: "🗄", label: "Data Engineer" },
-  aie: { col: C.aie, icon: "🤖", label: "AI Engineer" }
-};
-
-const PATH_COL: Record<string, string> = { mle: C.mle, ds: C.ds, de: C.de, aie: C.aie };
-const PATH_LBL: Record<string, string> = { mle: "MLE", ds: "DS", de: "DE", aie: "AI Engineer" };
-const TIER_LABELS = ["FOUNDATIONS", "CORE SKILLS", "INTERMEDIATE", "ADVANCED", "MASTERY"];
-
-const pathProgress = (data: SkillData) => {
-  if (!data.nodes.length) return 0;
-  const total = data.nodes.reduce((s, n) => {
-    const currentLevel = data.levels[n.id]?.level || 0;
-    return s + currentLevel;
-  }, 0);
-  return Math.round((total / (data.nodes.length * 10)) * 100);
-};
-
-// Safe helper to parse the prerequisites string into an array
-const getPrereqs = (n: SkillNode): string[] => {
-  return n.prerequisites ? n.prerequisites.split(",").map(id => id.trim()) : [];
-};
-
-// Safe helper to parse shared paths if they exist
-const getShared = (n: SkillNode): string[] => {
-  // @ts-ignore - Assuming 'shared' might exist based on your UI code, fallback to empty array
-  return (n.shared as string[]) || [];
-};
-
-type Props = Pick<UseGameState, "user" | "skillNodes" | "loadSkillPath" | "levelUpSkill">;
-
 export default function Skills({ user, skillNodes, loadSkillPath, levelUpSkill }: Props) {
   const [path, setPath] = useState("mle");
 
@@ -59,6 +22,8 @@ export default function Skills({ user, skillNodes, loadSkillPath, levelUpSkill }
   const col = meta.col;
   const sp = user?.sp ?? 0;
 
+  console.log("RAW SKILL STATE:", skillNodes);
+  console.log("NODES FOR CURRENT PATH:", nodes);
   // NOTE: Adjust `user?.skillData?.[path]?.levels` to match exactly where levels live in your user state
   const userLevels = (user as any)?.skillData?.[path]?.levels ?? {};
 
@@ -443,3 +408,57 @@ export default function Skills({ user, skillNodes, loadSkillPath, levelUpSkill }
     </div>
   );
 }
+const R = 28; // node radius
+const CW = 720;
+const CH = 590;
+
+const TREE_META: Record<string, { col: string; icon: string; label: string }> = {
+  mle: { col: C.mle, icon: "⚡", label: "Machine Learning Engineer" },
+  ds: { col: C.ds, icon: "📊", label: "Data Scientist" },
+  de: { col: C.de, icon: "🗄", label: "Data Engineer" },
+  aie: { col: C.aie, icon: "🤖", label: "AI Engineer" }
+};
+
+const PATH_COL: Record<string, string> = { mle: C.mle, ds: C.ds, de: C.de, aie: C.aie };
+const PATH_LBL: Record<string, string> = { mle: "MLE", ds: "DS", de: "DE", aie: "AIE" };
+const TIER_LABELS = ["FOUNDATIONS", "CORE SKILLS", "INTERMEDIATE", "ADVANCED", "MASTERY"];
+
+const pathProgress = (data: SkillData) => {
+  if (!data.nodes.length) return 0;
+  const total = data.nodes.reduce((s, n) => {
+    const currentLevel = data.levels[n.id]?.level || 0;
+    return s + currentLevel;
+  }, 0);
+  return Math.round((total / (data.nodes.length * 10)) * 100);
+};
+
+// Safe helper to parse the prerequisites string into an array
+const getPrereqs = (n: SkillNode | any): string[] => {
+  const raw = n.prereqs || n.prerequisites;
+  if (!raw) return [];
+
+  if (Array.isArray(raw)) return raw; // Already an array
+
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn("Failed to parse prerequisites for node", n.idraw);
+    return [];
+  }
+};
+
+// Safe helper to parse shared paths if they exist
+const getShared = (n: SkillNode | any): string[] => {
+  const raw = n.shared;
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw; // Already an array
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to parse shared paths for node", n.id);
+    return [];
+  }
+};
+
+
+type Props = Pick<UseGameState, "user" | "skillNodes" | "loadSkillPath" | "levelUpSkill">;

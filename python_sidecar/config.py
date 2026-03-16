@@ -11,26 +11,27 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="NF_", case_sensitive=False)
 
+    IDENTIFIER: str = "com.neuralforge.app"
+
     # ── Server ────────────────────────────────────────────────────────────────
     PORT:       int  = 7731
     HOST:       str  = "127.0.0.1"
     DEBUG:      bool = False
 
     # ── Data paths ────────────────────────────────────────────────────────────
-    DATA_DIR:   str  = str(Path.home() / ".local/share/neural-forge")
-    DB_PATH:    str  = str(Path.home() / ".local/share/neural-forge/neural_forge.db")
+    DATA_DIR:   str  = str(Path.home() / f".local/share/{IDENTIFIER}")
+    DB_PATH:    str  = str(Path.home() / f".local/share/{IDENTIFIER}/neural_forge.db")
     VAULT_PATH: str  = ""          # set in app Settings UI
-    PLUGIN_DIR: str  = str(Path.home() / ".local/share/neural-forge/plugins")
-    BACKUP_DIR: str  = str(Path.home() / ".local/share/neural-forge")
-
+    PLUGIN_DIR: str  = str(Path.home() / f".local/share/{IDENTIFIER}/plugins")
+    BACKUP_DIR: str  = str(Path.home() / f".local/share/{IDENTIFIER}")
     # ── AI / Ollama ───────────────────────────────────────────────────────────
     OLLAMA_URL:   str = "http://localhost:11434"
     OLLAMA_MODEL: str = "llama3"
     EMBED_MODEL:  str = "all-MiniLM-L6-v2"
 
     # ── FAISS ─────────────────────────────────────────────────────────────────
-    FAISS_INDEX: str  = str(Path.home() / ".local/share/neural-forge/faiss.index")
-    FAISS_PATH: str  = str(Path.home() / ".local/share/neural-forge/faiss.index")
+    FAISS_INDEX: str  = str(Path.home() / f".local/share/{IDENTIFIER}/faiss.index")
+    FAISS_PATH: str  = str(Path.home() / f".local/share/{IDENTIFIER}/faiss.index")
     CHUNK_SIZE:  int  = 400     # tokens per chunk
     CHUNK_OVERLAP: int = 80
 

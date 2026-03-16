@@ -168,21 +168,18 @@ export function useGameState(): UseGameState {
   const loadSkillPath = useCallback(async (path: string) => {
     if (skillNodes[path]) return;
     try {
-      const data: any = await (api as any).getSkillPathData(path);
+      const data: any = await (api as any).getSkillLevels(path);
 
-      const nodes = data?.nodes || [];
+      console.log("RAW PAYLOAD FROM RUST:", data);
+
+      const nodes = Array.isArray(data) ? data : (data?.nodes || []);
       setSkillNodes(p => ({ ...p, [path]: nodes }));
 
-      const levels = data?.levels || {};
-      setUser(prevUser => ({
-        ...prevUser,
-        skillData: {
-          ...prevUser?.skillData,
-          [path]: { levels }
-        }
-      }));
-    } catch { }
-  }, [skillNodes, setUser]);
+    } catch (e) {
+      console.error("API fetch failed:", e);
+    }
+  }, [skillNodes]);
+
 
   const levelUpSkill = useCallback(async (path: string, nodeId: string) => {
     try {

@@ -84,7 +84,7 @@ VALUES
     (
         'python',
         'mle',
-        'Python Engineering',
+        'Python',
         '🐍',
         'Advanced Python: memory management, GIL, async, type-hints.',
         360,
@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS user_skill_levels (
     node_id TEXT NOT NULL,
     path_id TEXT NOT NULL,
     level INTEGER NOT NULL DEFAULT 0,
+    xp_invested INTEGER NOT NULL DEFAULT 0,
     updated_at TEXT NOT NULL DEFAULT(datetime('now')),
     PRIMARY KEY (user_id, node_id, path_id)
 );
@@ -273,11 +274,14 @@ CREATE TABLE IF NOT EXISTS sr_cards (
     user_id TEXT NOT NULL DEFAULT 'default',
     node_id TEXT NOT NULL,
     path_id TEXT NOT NULL,
+    front TEXT NOT NULL, -- ADDED
+    back TEXT NOT NULL, -- ADDED
     ease_factor REAL NOT NULL DEFAULT 2.5,
     interval INTEGER NOT NULL DEFAULT 1,
     repetitions INTEGER NOT NULL DEFAULT 0,
     due_date TEXT NOT NULL DEFAULT(date('now', '+1 day')),
-    last_review TEXT
+    last_review TEXT,
+    created_at TEXT NOT NULL DEFAULT(datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS vault_index (
