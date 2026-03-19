@@ -231,6 +231,21 @@ fn main() {
             commands::get_config,
             commands::set_config,
             commands_p2::sidecar_status,
+            commands_p2::sr_create_card,
+            commands_p2::sr_submit_review,
+            commands_p2::search_vault,
+            commands_p2::search_related,
+            commands_p2::llm_chat,
+            commands_p2::llm_practice,
+            commands_p2::llm_explain,
+            commands_p2::llm_ingest_paper,
+            commands_p3::backup_commit,
+            commands_p3::backup_push,
+            commands_p3::backup_set_remote,
+            commands_p3::sync_write_note,
+            commands_p3::sync_resolve,
+            commands_p3::graph_neighbours,
+            commands_p3::graph_find_path,
             // (He omitido la lista larga aquí por brevedad, pero mantén todos tus comandos)
         ])
         .build(tauri::generate_context!())
