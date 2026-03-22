@@ -1,6 +1,8 @@
-# ⬡ Neural Forge — v1.0.0-beta
+# SynthesisOverthrust - v1.0.0-gamma
 
-> Gamified ML skill acquisition OS — Tauri 2.0 desktop app
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+> Gamified Skill acquisition App — Tauri 2.0 desktop app
 
 A fullscreen, game-like learning environment for machine learning engineers, data engineers, and data scientists. Inspired by Ragnarok Online skill trees and spaced-repetition science.
 
@@ -52,6 +54,7 @@ cargo tauri dev
 This beta migrates from Tauri 1.x to Tauri 2.0. Key changes:
 
 ### Rust API
+
 ```rust
 // Tauri 1.x — OLD
 use tauri::{ SystemTray, SystemTrayMenu, ... };
@@ -65,6 +68,7 @@ app.get_webview_window("main")
 ```
 
 ### Configuration (`tauri.conf.json`)
+
 ```jsonc
 // Tauri 1.x — OLD
 { "tauri": { "allowlist": { "fs": { "all": true } } } }
@@ -74,7 +78,9 @@ app.get_webview_window("main")
 ```
 
 ### Plugins
+
 Tauri 2.0 uses an official plugin ecosystem. All former allowlist features are now separate crates:
+
 ```toml
 tauri-plugin-fs           = "2"
 tauri-plugin-dialog       = "2"
@@ -86,6 +92,7 @@ tauri-plugin-global-shortcut = "2"
 ```
 
 ### Frontend
+
 ```typescript
 // Tauri 1.x — OLD
 import { invoke } from "@tauri-apps/api/tauri";
@@ -97,6 +104,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 ```
 
 ### Events
+
 ```typescript
 // Tauri 2.0
 import { listen } from "@tauri-apps/api/event";
@@ -268,4 +276,10 @@ Artifacts appear in `src-tauri/target/release/bundle/`.
 
 ## License
 
-MIT © Neural Forge Team
+Copyright (C) 2026 on1link
+
+NeuralForge is free software licensed under the
+[GNU General Public License v3.0](LICENSE).
+
+You are free to use, modify, and distribute this project, but any
+derivative work must also remain open source under the same license.
